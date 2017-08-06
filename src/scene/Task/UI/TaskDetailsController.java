@@ -1,6 +1,7 @@
 package scene.Task.UI;
 
 import com.jfoenix.controls.*;
+import com.jfoenix.validation.RequiredFieldValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,6 +32,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -105,8 +107,11 @@ public class TaskDetailsController implements Initializable{
     @FXML
     private JFXListView<User> memberListView;
     private ObservableList<User> obUserList;
+    private boolean canSave=false;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        startTimeTF.setIs24HourView(true);
+        endTimeTF.setIs24HourView(true);
 
         ObservableList<String> priority= FXCollections.observableArrayList(Priority.NONE.name(),Priority.LOW.name(),Priority.MEDIUM.name(),Priority.HIGH.name());
         priorityComboBox.setItems(priority);
@@ -121,6 +126,25 @@ public class TaskDetailsController implements Initializable{
 
         addUserButton.setStyle("-fx-padding: 0px;");
         addUserButton.setGraphic(plusImageView);
+        RequiredFieldValidator emptyField=new RequiredFieldValidator();
+        emptyField.setMessage("Required");
+
+        taskTaskField.getValidators().add(emptyField);
+        taskTaskField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue){
+                    if(taskTaskField.validate()){
+                        canSave=true;
+                    }else{
+                        canSave=false;
+
+                    }
+                }
+
+
+            }
+        });
 
 
 
@@ -230,11 +254,23 @@ public class TaskDetailsController implements Initializable{
                 @Override
                 public void changed(ObservableValue<? extends LocalTime> observable, LocalTime oldValue, LocalTime newValue) {
                     if(newValue!=oldValue) {
-                        String date=newValue.format(TaskControllerKt.getTimeFormatter());
-                        tempTask.setStime(date);
+                        if(startDateTF.getValue()==null){
+                            canSave=false;
+                            Alert alert=new Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                            alert.setHeaderText("The start date textfield need to be filled");
 
-                        changeButton.setVisible(true);
-                        canComplete=false;
+                            alert.show();
+                            startTimeTF.setValue(null);
+                        }else{
+                            canSave=true;
+                            String date=newValue.format(TaskControllerKt.getTimeFormatter());
+                            tempTask.setStime(date);
+
+                            changeButton.setVisible(true);
+                            canComplete=false;
+
+                        }
+
                     }
 
                 }
@@ -243,10 +279,22 @@ public class TaskDetailsController implements Initializable{
                 @Override
                 public void changed(ObservableValue<? extends LocalTime> observable, LocalTime oldValue, LocalTime newValue) {
                     if(newValue!=oldValue){
-                        String date=newValue.format(TaskControllerKt.getTimeFormatter());
-                        tempTask.setEtime(date);
-                        changeButton.setVisible(true);
-                        canComplete=false;
+                        if(endDateTF.getValue()==null){
+                            canSave=false;
+                            Alert alert=new Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                            alert.setHeaderText("The end date textfield need to be filled");
+                            endTimeTF.setValue(null);
+                            alert.show();
+                        }else{
+                            canSave=true;
+                            String date=newValue.format(TaskControllerKt.getTimeFormatter());
+                            tempTask.setEtime(date);
+                            changeButton.setVisible(true);
+                            canComplete=false;
+
+
+                        }
+
                     }
 
                 }
@@ -310,6 +358,8 @@ public class TaskDetailsController implements Initializable{
         return LocalDate.parse(date,TaskControllerKt.getYearFormatter());
 
     }
+
+    //complete the task
     @FXML
     void complete(ActionEvent event) {
         if(canComplete) {
@@ -326,10 +376,16 @@ public class TaskDetailsController implements Initializable{
     }
     @FXML
     void changeTask(ActionEvent event) {
-        TaskControllerKt.changeTask(tempTask);
-        tc.updateTaskListContontainer();
-        changeButton.setVisible(true);
-        canComplete=true;
+        validate();
+        if(canSave) {
+            TaskControllerKt.changeTask(tempTask);
+            tc.updateTaskListContontainer();
+            changeButton.setVisible(true);
+            canComplete = true;
+            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("save the change successful");
+            alert.show();
+        }
     }
     @FXML
     void addUser(ActionEvent event) {
@@ -421,6 +477,54 @@ public class TaskDetailsController implements Initializable{
         }
 
 
+
+    }
+    private void validate(){
+        /*startDateTF.setStyle("-fx-border-color: Black");
+        endDateTF.setStyle("-fx-border-color: Black");
+        endTimeTF.setStyle("-fx-border-color: Black");
+        startTimeTF.setStyle("-fx-border-color: Black");*/
+        canSave=true;
+        if(endDateTF.getValue()!=null){
+            if(startDateTF.getValue()!=null){
+                LocalDate sdate=startDateTF.getValue();
+                String sdateStr = sdate.format(TaskControllerKt.getYearFormatter());
+                Calendar sCal=TaskControllerKt.getCalendarByDate(sdateStr);
+
+                LocalDate edate=endDateTF.getValue();
+                String edateStr = edate.format(TaskControllerKt.getYearFormatter());
+                Calendar eCal=TaskControllerKt.getCalendarByDate(edateStr);
+
+
+
+
+
+                if(eCal.before(sCal)){
+                    canSave=false;
+                    /*startDateTF.setStyle("-fx-border-color: Red");
+                    endDateTF.setStyle("-fx-border-color: Red");
+                    endTimeTF.setStyle("-fx-border-color: Red");
+                    startTimeTF.setStyle("-fx-border-color: Red");*/
+                    Alert alert=new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(" End date  must after the start date ");
+                    alert.show();
+
+                } else if(!eCal.after(sCal)){
+                    if(startTimeTF.getValue()!=null&&endTimeTF.getValue()!=null){
+                        LocalTime slc=startTimeTF.getValue();
+                        LocalTime elc=endTimeTF.getValue();
+                        if(elc.isBefore(slc)){
+                            canSave=false;
+                            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+                            alert.setHeaderText(" End  time must after the start time");
+                            alert.show();
+                        }
+
+                    }
+                }
+
+            }
+        }
 
     }
 

@@ -108,10 +108,6 @@ fun retrieveTaskMember(taskID:Int):ArrayList<User>{
         data.add(user);
     }
     return data
-
-
-
-
 }
 
 fun addUser(task: Task,userID:String){

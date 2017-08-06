@@ -160,4 +160,34 @@ public class User {
 
         return true;
     }
+    public static ArrayList<User> getEventMember(int id){
+        ArrayList<User> arr=new ArrayList<>(  );
+        CachedRowSet rs=DB.read( "select * from User u inner join UserEvents ue on u.userID=ue.userID where ue.eventID="+id );
+
+        try {
+            while(rs.next()){
+                User user=new User();
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setUserID(rs.getString("userID"));
+                Date date=rs.getDate("birthDate");
+                GregorianCalendar gc=new GregorianCalendar();
+                gc.setTime(date);
+                user.setBirthDate(gc);
+                String gender=rs.getString("gender");
+                char c=gender.charAt(0);
+                user.setGender(c);
+                user.setHpNumber(rs.getInt("hpNumber"));
+                arr.add( user );
+
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return arr;
+
+    }
+
+
 }

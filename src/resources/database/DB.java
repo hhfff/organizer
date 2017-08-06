@@ -17,10 +17,10 @@ public class DB {
     //private static final String DATABASE_URL = "jdbc:mysql://172.27.187.147:3306/organizer?useSSL=false";
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/organizer?useSSL=false";
 
-    /*private static String userName = "user";
-    private static String password = "Password&&123H";*/
+    //private static String userName = "user";
+    private static String password = "Password&&123H";
     private static String userName = "user";
-    private static String password = "dresden001";
+    //private static String password = "dresden001";
 
 
     public DB() {
