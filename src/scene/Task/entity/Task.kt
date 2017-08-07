@@ -4,6 +4,8 @@ import javafx.scene.control.Alert
 import resources.database.DB
 import resources.database.entity.User
 import scene.Task.*
+import scene.main.UI.MainSceneController
+import java.time.LocalTime
 import java.util.*
 import javax.sql.rowset.CachedRowSet
 import kotlin.collections.ArrayList
@@ -206,6 +208,7 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
 
         DB.update(queryCol+queryVal)
+        MainSceneController.getReminders().add(this,":00.000");
     }
     fun change(){
         var queryCol="update task set "
@@ -247,6 +250,9 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
         DB.update(queryCol)
 
+
+        MainSceneController.getReminders().add(this,":00.000");
+
     }
 
     override fun compareTo(other: Task): Int {
@@ -266,6 +272,15 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
             }
         }
         return 1
+    }
+
+
+    fun getStartDateTime():Calendar{
+        val cal=scene.Task.getCalendarByDate(sdate+"")
+        val time=LocalTime.parse(stime)
+        cal.set(Calendar.HOUR_OF_DAY,time.hour)
+        cal.set(Calendar.MINUTE,time.minute)
+        return cal
     }
 
 

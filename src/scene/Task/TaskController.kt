@@ -1,12 +1,16 @@
 package scene.Task
 
+import javafx.fxml.FXMLLoader
+import javafx.stage.Stage
 import resources.database.entity.User
 import scene.Task.entity.Task
 import scene.Task.entity.deleteTask
 import scene.Task.entity.getTaskByUser
+import sun.plugin2.liveconnect.JavaClass
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 
 /**
@@ -158,11 +162,15 @@ fun getDayEnd(date:Calendar):Calendar{
 fun getTaskByEvent(eventID:Int): ArrayList<Task> {
     return scene.Task.entity.getTaskByEvent(eventID);
 }
+fun displayRemind(t:Task){
+    
 
+}
 internal var yearDateFormat = SimpleDateFormat("yyyy-MM-dd")
 internal var dateFormatYear = SimpleDateFormat("dd-MM-yyyy")
 var YearFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 var formatterYear = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 var timeFormatter=DateTimeFormatter.ofPattern("HH:mm")
+var datetimeFromatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 

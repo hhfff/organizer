@@ -340,10 +340,6 @@ public class AddTaskController implements Initializable{
                 String edateStr = edate.format(TaskControllerKt.getYearFormatter());
                 Calendar eCal=TaskControllerKt.getCalendarByDate(edateStr);
 
-
-
-
-
                 if(eCal.before(sCal)){
                     canSave=false;
                     /*startDateTF.setStyle("-fx-border-color: Red");

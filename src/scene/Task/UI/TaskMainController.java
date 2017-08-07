@@ -207,6 +207,8 @@ public class TaskMainController implements Initializable {
                                  alert.setHeaderText("Are you sure to delete");
                                 Optional<ButtonType> rs=alert.showAndWait();
                                if(rs.get()==ButtonType.OK) {
+                                   //delete timer if exist
+
 
                                 TaskControllerKt.deleteTaskMain(tc.getTask());
                                 taskDetailsContainer.getChildren().clear();

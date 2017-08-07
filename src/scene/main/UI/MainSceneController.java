@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import scene.Task.entity.TodayReminder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +18,16 @@ import java.util.ResourceBundle;
  * Created by Liu Woon Kit on 12/6/2017.
  */
 public class MainSceneController implements Initializable{
+    private static TodayReminder reminders=new TodayReminder();
+
+    public static TodayReminder getReminders() {
+        return reminders;
+    }
+
+    public static void setReminders(TodayReminder reminders) {
+        MainSceneController.reminders = reminders;
+    }
+
     @FXML
     private AnchorPane content;
 
@@ -81,6 +92,8 @@ public class MainSceneController implements Initializable{
 
     @FXML
     void logoutClick(ActionEvent event) {
+        reminders.stopAll();
+
         Stage stage = (Stage) content.getScene().getWindow();
         stage.setUserData(null);
         try {stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../../login/UI/LoginScene.fxml"))));} catch (IOException e) {}
