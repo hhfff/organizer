@@ -7,6 +7,7 @@ import resources.database.entity.User;
  */
 public class LoginController {
     public boolean verifyUser(String userID, String password) {
+
         return User.verifyUser(userID, password);
     }
 }

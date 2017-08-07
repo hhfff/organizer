@@ -25,7 +25,9 @@ import resources.database.entity.User;
 import scene.Task.Priority;
 import scene.Task.Repeat;
 import scene.Task.TaskControllerKt;
+import scene.Task.entity.Reminder;
 import scene.Task.entity.Task;
+import scene.main.UI.MainSceneController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -367,6 +369,18 @@ public class TaskDetailsController implements Initializable{
             tc.getTaskDetailsContainer().getChildren().clear();
             tc.updateTaskListContontainer();
 
+            int id=task.getId();
+            ArrayList<Reminder> arr= MainSceneController.getReminders().getAllReminder();
+            for(Reminder r:arr){
+                int rid=r.getTask().getId();
+                if(rid==id){
+                    r.stop();
+                    arr.remove(r);
+                    System.out.print(arr.size());
+                    break;
+                }
+            }
+
         }else{
             Alert aLert=new Alert(Alert.AlertType.INFORMATION);
             aLert.setTitle("Warning");
@@ -380,7 +394,7 @@ public class TaskDetailsController implements Initializable{
         if(canSave) {
             TaskControllerKt.changeTask(tempTask);
             tc.updateTaskListContontainer();
-            changeButton.setVisible(true);
+            changeButton.setVisible(false);
             canComplete = true;
             Alert alert=new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("save the change successful");

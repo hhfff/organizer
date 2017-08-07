@@ -5,6 +5,7 @@ import resources.database.DB
 import resources.database.entity.User
 import scene.Task.*
 import scene.main.UI.MainSceneController
+import java.sql.SQLException
 import java.time.LocalTime
 import java.util.*
 import javax.sql.rowset.CachedRowSet
@@ -208,6 +209,14 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
 
         DB.update(queryCol+queryVal)
+        val rs=DB.read("select max(id) id from task")
+
+        try {
+            while (rs.next()) {
+                val i = rs.getInt("id");
+                this.id = i
+            }
+        }catch (e:SQLException){}
         MainSceneController.getReminders().add(this,":00.000");
     }
     fun change(){
@@ -250,8 +259,13 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
         DB.update(queryCol)
 
+        //caution
+        val rs=DB.read("select *  from task where id=$id")
+        val data= processResultSet(rs)
+        MainSceneController.getReminders().add(data.get(0),".000");
 
-        MainSceneController.getReminders().add(this,":00.000");
+
+
 
     }
 
@@ -277,9 +291,14 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
     fun getStartDateTime():Calendar{
         val cal=scene.Task.getCalendarByDate(sdate+"")
-        val time=LocalTime.parse(stime)
-        cal.set(Calendar.HOUR_OF_DAY,time.hour)
-        cal.set(Calendar.MINUTE,time.minute)
+        if(stime!=null){
+            val time=LocalTime.parse(stime)
+            cal.set(Calendar.HOUR_OF_DAY,time.hour)
+            cal.set(Calendar.MINUTE,time.minute)
+
+        }
+
+
         return cal
     }
 

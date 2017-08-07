@@ -3,6 +3,7 @@ package scene.Task.entity;
 import resources.database.UserAccess;
 import scene.Task.TaskControllerKt;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,23 +17,38 @@ public class TodayReminder {
 
     private ArrayList<Reminder> allReminder= new ArrayList<>();
     public TodayReminder(){
+
         //get all today task
+
+       //ystem.out.println(allReminder.size());
+    }
+    public  void loadDataBase(){
         Calendar today = TaskControllerKt.getStartofToday();
         ArrayList<Task> databaseTask= TaskControllerKt.getTaskByUser(UserAccess.getUser().getUserID(),TaskControllerKt.getYearDateFormat().format(today.getTime()));
         System.out.println("database time "+databaseTask.size());
         //System.out.println(databaseTask.size());
-       for(Task t:databaseTask){
-           add(t,".000");
-       }
-       //ystem.out.println(allReminder.size());
+        for(Task t:databaseTask){
+            add(t,".000");
+        }
+
     }
 
     public void add(Task t,String add){
+        for(Reminder r:allReminder){
+            if(t.getId()==r.getTask().getId()){
+                r.stop();
+                allReminder.remove(r);
+
+                System.out.println(r.getTask().getId()+" remove");
+                break;
+
+            }
+        }
 
         if(checkTask(t,add)){
             Reminder r=new Reminder(t,this);
             allReminder.add(r);
-            System.out.print(allReminder.size());
+            System.out.println(t.getId()+" add");
         }
 
 
@@ -40,9 +56,12 @@ public class TodayReminder {
 
     private boolean checkTask(Task task,String add){
         //check date
-        Calendar cal=TaskControllerKt.getCalendarByDate(task.getSdate());
-        Calendar startofday=TaskControllerKt.getStartofToday();
-        if(cal.before(startofday)){
+
+        DateTimeFormatter dtf=TaskControllerKt.getYearFormatter();
+        LocalDate sDate=LocalDate.parse(task.getSdate(),dtf);
+        LocalDate today=LocalDate.now();
+
+        if(sDate.isBefore(today)){
             return false;
         }
         if(task.getStime()!=null){
@@ -54,7 +73,7 @@ public class TodayReminder {
                 return false;
 
             }
-        }
+        }else{return false;}
         return true;
 
     }

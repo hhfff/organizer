@@ -28,7 +28,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import resources.database.UserAccess;
 import scene.Task.TaskControllerKt;
+import scene.Task.entity.Reminder;
 import scene.Task.entity.Task;
+import scene.main.UI.MainSceneController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -208,6 +210,15 @@ public class TaskMainController implements Initializable {
                                 Optional<ButtonType> rs=alert.showAndWait();
                                if(rs.get()==ButtonType.OK) {
                                    //delete timer if exist
+                                   int id=tc.getTask().getId();
+                                   ArrayList<Reminder> arr= MainSceneController.getReminders().getAllReminder();
+                                   for(Reminder r:arr){
+                                       if(r.getTask().getId()==id){
+                                           r.stop();
+                                           arr.remove(r);
+                                       }
+                                   }
+
 
 
                                 TaskControllerKt.deleteTaskMain(tc.getTask());

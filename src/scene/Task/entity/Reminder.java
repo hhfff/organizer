@@ -17,6 +17,7 @@ import java.util.Timer;
  * Created by hhf on 8/7/17.
  */
 public class Reminder {
+    private Task task;
 
     private Timeline timer;
     private long minutetoMilli=60*1000;
@@ -37,6 +38,8 @@ public class Reminder {
 
     }
     public Reminder(Task task,TodayReminder todayReminder){
+        this.task=task;
+        System.out.println(task.getStartDateTime().getTimeInMillis()-System.currentTimeMillis());
 
         timer=new Timeline(new KeyFrame(Duration.millis(task.getStartDateTime().getTimeInMillis()-System.currentTimeMillis()),event -> {
             FXMLLoader loader=new FXMLLoader(getClass().getResource("../../Task/UI/TaskRemind.fxml"));
@@ -69,5 +72,13 @@ public class Reminder {
     public void display(Task t){
 
 
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }
