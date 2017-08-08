@@ -34,23 +34,35 @@ public class AddUserController implements Initializable{
         emptyField.setMessage("Required");
 
         adminNoTF.getValidators().add(emptyField);
+        String[] suggestions= UserController.getAllUser();
+        TextFields.bindAutoCompletion(adminNoTF,suggestions);
         adminNoTF.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
                 if(!newValue){
                     if(adminNoTF.validate()){
-                        canSave=true;
+                        //check empty
+
+                        //check suggestion lists
+                        String text=adminNoTF.getText();
+                        String[] data = text.split(" ");
+                        for(String s :suggestions){
+                            String[] sug = s.split(" ");
+
+                            if(data[0].equals(sug[0])){
+                                canSave=true;
+                            }
+
+                        }
+
                     }else{
                         canSave=false;
-
                     }
                 }
-
-
             }
         });
-        String[] suggestions= UserController.getAllUser();
-        TextFields.bindAutoCompletion(adminNoTF,suggestions);
+
 
 
     }
@@ -61,9 +73,8 @@ public class AddUserController implements Initializable{
             String text=adminNoTF.getText();
             String[] data = text.split(" ");
             if(!UserAccess.getUser().getUserID().equals(data)){
-                TaskControllerKt.addUser(task,data[0]);
+                TaskControllerKt.addmember(task,data[0]);
                 taskDetailsController.updateMemberList();
-
             }
             else{
                 Alert alert=new Alert(Alert.AlertType.ERROR);
@@ -71,7 +82,10 @@ public class AddUserController implements Initializable{
                 alert.setHeaderText("Same as task creator");
                 alert.show();
             }
-
+        }else{
+            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("user not exist");
+            alert.show();
 
         }
 

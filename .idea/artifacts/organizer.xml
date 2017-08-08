@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="javafx" name="llllllllll-organizer">
-    <output-path>$PROJECT_DIR$/out/artifacts/llllllllll_organizer</output-path>
+  <artifact type="javafx" name="organizer">
+    <output-path>$PROJECT_DIR$/out/artifacts/organizer</output-path>
     <properties id="javafx-properties">
       <options>
         <option name="appClass" value="scene.main.Main" />
@@ -12,8 +12,8 @@
       </options>
     </properties>
     <root id="root">
-      <element id="archive" name="llllllllll_organizer.jar">
-        <element id="module-output" name="llllllllll-organizer" />
+      <element id="archive" name="organizer.jar">
+        <element id="module-output" name="organizer" />
       </element>
     </root>
   </artifact>

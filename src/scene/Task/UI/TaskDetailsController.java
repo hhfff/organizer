@@ -128,10 +128,7 @@ public class TaskDetailsController implements Initializable{
 
         addUserButton.setStyle("-fx-padding: 0px;");
         addUserButton.setGraphic(plusImageView);
-        RequiredFieldValidator emptyField=new RequiredFieldValidator();
-        emptyField.setMessage("Required");
 
-        taskTaskField.getValidators().add(emptyField);
         taskTaskField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -390,8 +387,7 @@ public class TaskDetailsController implements Initializable{
     }
     @FXML
     void changeTask(ActionEvent event) {
-        validate();
-        if(canSave) {
+        if(validate()) {
             TaskControllerKt.changeTask(tempTask);
             tc.updateTaskListContontainer();
             changeButton.setVisible(false);
@@ -489,16 +485,12 @@ public class TaskDetailsController implements Initializable{
             }
             memberListView.setContextMenu(menu);
         }
-
-
-
     }
-    private void validate(){
+    private boolean validate(){
         /*startDateTF.setStyle("-fx-border-color: Black");
         endDateTF.setStyle("-fx-border-color: Black");
         endTimeTF.setStyle("-fx-border-color: Black");
         startTimeTF.setStyle("-fx-border-color: Black");*/
-        canSave=true;
         if(endDateTF.getValue()!=null){
             if(startDateTF.getValue()!=null){
                 LocalDate sdate=startDateTF.getValue();
@@ -509,12 +501,8 @@ public class TaskDetailsController implements Initializable{
                 String edateStr = edate.format(TaskControllerKt.getYearFormatter());
                 Calendar eCal=TaskControllerKt.getCalendarByDate(edateStr);
 
-
-
-
-
                 if(eCal.before(sCal)){
-                    canSave=false;
+
                     /*startDateTF.setStyle("-fx-border-color: Red");
                     endDateTF.setStyle("-fx-border-color: Red");
                     endTimeTF.setStyle("-fx-border-color: Red");
@@ -522,23 +510,31 @@ public class TaskDetailsController implements Initializable{
                     Alert alert=new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(" End date  must after the start date ");
                     alert.show();
-
+                    return false;
                 } else if(!eCal.after(sCal)){
                     if(startTimeTF.getValue()!=null&&endTimeTF.getValue()!=null){
                         LocalTime slc=startTimeTF.getValue();
                         LocalTime elc=endTimeTF.getValue();
                         if(elc.isBefore(slc)){
-                            canSave=false;
-                            Alert alert=new Alert(Alert.AlertType.INFORMATION);
-                            alert.setHeaderText(" End  time must after the start time");
-                            alert.show();
-                        }
 
+                            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+                            alert.setHeaderText(" End time must after the start time");
+                            alert.show();
+                            return false;
+                        }
                     }
                 }
-
             }
         }
+        //if date time check pass then chec
+
+        if(canSave==false){
+            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(" Task name cannot be empty");
+            alert.show();
+            return false;
+        }
+        return true;
 
     }
 

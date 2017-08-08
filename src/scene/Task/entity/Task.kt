@@ -16,11 +16,10 @@ import kotlin.collections.ArrayList
  */
 
 fun getTaskByEvent(eventID:Int): ArrayList<Task> {
-    println(eventID);
     val rs=DB.read("select * from task where eventID='$eventID' and complete=0")
     return processResultSet(rs);
 }
-
+//retrieve all task
 fun getTaskByUser(userID:String):ArrayList<Task>{
     val rs=DB.read("select * from task where creatorID='$userID' and complete=0")
     //retrive personal first
@@ -29,6 +28,7 @@ fun getTaskByUser(userID:String):ArrayList<Task>{
     data.addAll(processResultSet(ors))
     return data
 }
+//retriveTask by today
 fun getTaskByUser(userID:String,today:String):ArrayList<Task>{
     val result=DB.read("select * from task where creatorID='$userID' and start ='$today' and complete=0")
     val data= processResultSet(result);
@@ -37,6 +37,7 @@ fun getTaskByUser(userID:String,today:String):ArrayList<Task>{
     data.addAll(processResultSet(ors))
     return data
 }
+//retrive task by start and end date
 fun getTaskByUser(userID:String,startDate:String,endDate:String):ArrayList<Task>{
 
 
@@ -46,7 +47,7 @@ fun getTaskByUser(userID:String,startDate:String,endDate:String):ArrayList<Task>
     data.addAll(processResultSet(ors))
     return data
 }
-private fun processResultSet(result:CachedRowSet):ArrayList<Task>{
+fun processResultSet(result:CachedRowSet):ArrayList<Task>{
     val tastArr=ArrayList<Task>();
     try {
         while (result.next()) {
@@ -90,52 +91,10 @@ private fun processResultSet(result:CachedRowSet):ArrayList<Task>{
 
 
 }
-fun deleteMember(taskId:Int,userId: String){
-    DB.update("delete from taskUser where taskID=$taskId and userID='$userId'")
-}
 
 
-fun deleteTask(t:Task){
-    val id=t.id
-    DB.update("delete  from task where id=$id")
-
-}
-
-fun retrieveTaskMember(taskID:Int):ArrayList<User>{
-    val result=DB.read("SELECT u.userID,u.name FROM User u inner join taskUser tu on u.userID=tu.userID where tu.taskID=$taskID")
-    val data=ArrayList<User>()
-    while (result.next()){
-        val user=User()
-        user.userID=result.getString("userID")
-        user.name=result.getString("name")
-        data.add(user);
-    }
-    return data
-}
-
-fun addUser(task: Task,userID:String){
 
 
-    DB.update("insert into taskUser values('$userID',${task.id}) ")
-
-
-}
-fun getCreator(creatorID: String):String{
-
-    val result=DB.read("SELECT DISTINCT u.name from User u " +
-            "inner join task t ON " +
-            "t.creatorID=u.userID " +
-            "where t.creatorID='$creatorID'")
-    var name:String=""
-    try{
-        while(result.next()){
-            name= result.getString("name")
-        }
-    }catch (e:NullPointerException){}
-    return name;
-
-
-}
 
 fun setComplete(task: Task){
 
@@ -158,6 +117,11 @@ fun setComplete(task: Task){
 fun changeTask(task: Task){
     task.change()
 
+
+}
+fun deleteTask(t:Task){
+    val id=t.id
+    DB.update("delete  from task where id=$id")
 
 }
 
@@ -287,8 +251,6 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
         }
         return 1
     }
-
-
     fun getStartDateTime():Calendar{
         val cal=scene.Task.getCalendarByDate(sdate+"")
         if(stime!=null){
@@ -301,7 +263,4 @@ class Task(var id:Int?,var task_name:String?, var sdate:String?,var stime:String
 
         return cal
     }
-
-
-
 }

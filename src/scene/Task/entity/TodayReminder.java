@@ -25,7 +25,6 @@ public class TodayReminder {
     public  void loadDataBase(){
         Calendar today = TaskControllerKt.getStartofToday();
         ArrayList<Task> databaseTask= TaskControllerKt.getTaskByUser(UserAccess.getUser().getUserID(),TaskControllerKt.getYearDateFormat().format(today.getTime()));
-        System.out.println("database time "+databaseTask.size());
         //System.out.println(databaseTask.size());
         for(Task t:databaseTask){
             add(t,".000");

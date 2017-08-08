@@ -118,7 +118,7 @@ public class AddTaskController implements Initializable{
                     if(startDateTF.getValue()==null){
                         canSave=false;
                         Alert alert=new Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                        alert.setHeaderText("The start date textfield need to be filled");
+                        alert.setHeaderText("Need select the start date");
 
                         alert.show();
                         startTimeTF.setValue(null);
@@ -136,7 +136,7 @@ public class AddTaskController implements Initializable{
                     if(endDateTF.getValue()==null){
                         canSave=false;
                         Alert alert=new Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                        alert.setHeaderText("The end date textfield need to be filled");
+                        alert.setHeaderText("Need select the end date");
                         endTimeTF.setValue(null);
                         alert.show();
                     }else{canSave=true;}
@@ -176,90 +176,6 @@ public class AddTaskController implements Initializable{
                 }
 
             }
-        });
-
-        /*startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                FXMLLoader loader=new FXMLLoader(getClass().getResource("dateTimePicker.fxml"));
-                try {
-                    AnchorPane ap=loader.load();
-                    PriorityPickerController rpc=loader.getController();
-                    //rpc.
-                    Stage stage=new Stage(StageStyle.UNDECORATED);
-                    Point2D pos=floatUIPos(event,startTimeTF);
-                    stage.setX(pos.getX());
-                    stage.setY(pos.getY());
-
-                    stage.setScene(new Scene(ap));
-                    stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            if(newValue==false) stage.close();
-                        }
-                    });
-                    stage.show();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        /*priorityButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-                FXMLLoader loader=new FXMLLoader(getClass().getResource("PriorityPicker.fxml"));
-                try {
-                    AnchorPane ap=loader.load();
-                    PriorityPickerController rpc=loader.getController();
-                    //rpc.
-                    Stage stage=new Stage(StageStyle.UNDECORATED);
-                    Point2D pos=floatUIPos(event,priorityTextField);
-                    stage.setX(pos.getX());
-                    stage.setY(pos.getY());
-                    stage.setScene(new Scene(ap));
-                    stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            if(newValue==false) stage.close();
-                        }
-                    });
-                    stage.show();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        /*repeatButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                FXMLLoader loader=new FXMLLoader(getClass().getResource("RepeatPicker.fxml"));
-                try {
-                    AnchorPane ap=loader.load();
-                    RepeatPickerController rpc=loader.getController();
-                    //rpc.
-                    Stage stage=new Stage(StageStyle.UNDECORATED);
-                    stage.setScene(new Scene(ap));
-                    Point2D pos=floatUIPos(event,repeatTextField);
-                    stage.setX(pos.getX());
-                    stage.setY(pos.getY());
-                    stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                            if(newValue==false) stage.close();
-                        }
-                    });
-                    stage.show();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
         });*/
     }
 
@@ -272,8 +188,8 @@ public class AddTaskController implements Initializable{
 
     @FXML
     void save(ActionEvent event) {
-        validate();
-        if(canSave) {
+
+        if( validate()) {
 
             String task = taskNameTextField.getText();
 
@@ -324,12 +240,12 @@ public class AddTaskController implements Initializable{
     public void setEvent(String event) {
         this.event = event;
     }
-    private void validate(){
+    private boolean validate(){
         /*startDateTF.setStyle("-fx-border-color: Black");
         endDateTF.setStyle("-fx-border-color: Black");
         endTimeTF.setStyle("-fx-border-color: Black");
         startTimeTF.setStyle("-fx-border-color: Black");*/
-        canSave=true;
+
         if(endDateTF.getValue()!=null){
             if(startDateTF.getValue()!=null){
                 LocalDate sdate=startDateTF.getValue();
@@ -341,7 +257,7 @@ public class AddTaskController implements Initializable{
                 Calendar eCal=TaskControllerKt.getCalendarByDate(edateStr);
 
                 if(eCal.before(sCal)){
-                    canSave=false;
+
                     /*startDateTF.setStyle("-fx-border-color: Red");
                     endDateTF.setStyle("-fx-border-color: Red");
                     endTimeTF.setStyle("-fx-border-color: Red");
@@ -349,28 +265,30 @@ public class AddTaskController implements Initializable{
                     Alert alert=new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(" End date  must after the start date ");
                     alert.show();
+                    return false;
 
                 } else if(!eCal.after(sCal)){
                     if(startTimeTF.getValue()!=null&&endTimeTF.getValue()!=null){
                         LocalTime slc=startTimeTF.getValue();
                         LocalTime elc=endTimeTF.getValue();
                         if(elc.isBefore(slc)){
-                            canSave=false;
+
                             Alert alert=new Alert(Alert.AlertType.INFORMATION);
                             alert.setHeaderText(" End time must after the start time");
                             alert.show();
+                            return false;
                         }
-
                     }
                 }
 
+
+
+
             }
         }
+        //if date time check pass then chec
 
-
-
-
-
-
+        if(canSave==false) return false;
+        return true;
     }
 }

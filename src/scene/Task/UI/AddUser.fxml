@@ -4,7 +4,7 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="176.0" prefWidth="310.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scene.Task.UI.AddUserController">
+<AnchorPane prefHeight="176.0" prefWidth="310.0" stylesheets="@error.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scene.Task.UI.AddUserController">
    <children>
       <JFXTextField fx:id="adminNoTF" labelFloat="true" layoutX="36.0" layoutY="57.0" prefHeight="24.0" prefWidth="241.0" promptText="Admin Number" />
       <JFXButton layoutX="103.0" layoutY="122.0" onAction="#add" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: #212121;" text="Add" textFill="WHITE">

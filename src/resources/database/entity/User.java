@@ -150,7 +150,7 @@ public class User {
     public static boolean verifyUser(String userID, String password) {
         CachedRowSet rs = DB.read("SELECT userID, name, birthDate, email, hpNumber, gender FROM User WHERE userID='" + userID + "' && password='" + password + "'");
 
-        if(rs.size() == 0)
+        if(rs==null||rs.size() == 0)
             return false;
 
         try {
@@ -192,5 +192,43 @@ public class User {
     }
 
 
+//task member relate
+    public static ArrayList<User> retrieveTaskMember(int taskID ){
+        CachedRowSet result=DB.read("SELECT u.userID,u.name FROM User u inner join taskUser tu on u.userID=tu.userID where tu.taskID="+taskID);
+        ArrayList<User> data=new ArrayList<User>();
+        try {
+            while (result.next()){
+                User user=new User();
+                user.userID=result.getString("userID");
+                user.name=result.getString("name");
+                data.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    public static void deleteTaskMember(int taskId,String userID){
+        DB.update(String.format("delete from taskUser where taskID=%d and userID='%s'",taskId,userID));
+    }
+    public static void addTaskMember(int taskId,String userID){
+        DB.update(String.format("insert into taskUser values('%s',%d)",userID,taskId));
+    }
+    public static String getCreatorName(String creatorID){
 
+        CachedRowSet result=DB.read("SELECT DISTINCT u.name from User u " +
+                "inner join task t ON " +
+                "t.creatorID=u.userID " +
+                "where t.creatorID='"+creatorID+"'");
+        String name="";
+
+        try {
+            while(result.next()){
+                name= result.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
 }
